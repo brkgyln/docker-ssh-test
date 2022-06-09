@@ -1,43 +1,24 @@
-name: scp files
+name: test
 on:
   push:
     branches:
-      - master
+    - stage
 
 env:
-  TARGET_DIR: /home/github/test
-
+  FIRST_NAME: Mona
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
-
     steps:
-      - name: checkout
-        uses: actions/checkout@v1
-
-      - name: ssh scp ssh pipelines
-        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
-        env:
-          WELCOME: "ssh scp ssh pipelines"
-          LASTSSH: "Doing something after copying"
+      - name: ls -a via OPEN SSH Private Key
+        uses: fifsky/ssh-action@master
         with:
-          host: "45.130.15.51"
+          command: |
+            whoami
+            ls -a
+            echo "env_var:$FIRST_NAME"
+            exit 1
+          host: 45.130.15.51
           user: root
-          pass: "root"
-          port: "22"
-          connect_timeout: 10s
-          first_ssh: |-
-            rm -rf /home/github/test  
-            ls -la 
-            echo $WELCOME   
-            mkdir -p /home/github/test/test1 &&    
-            mkdir -p /home/github/test/test2 &&
-          scp: |-
-            './test/*' => /home/github/test/
-            ./test/test1* => $TARGET_DIR/test1/
-            ./test/test*.csv => "/home/github/test/test2/"
-          last_ssh: |-
-            echo $LASTSSH &&
-            (mkdir test1/test || true)
-            ls -la
+          key: ${{ secrets.SSH_LEY}}
+          args: "-tt -vvv"
