@@ -1,35 +1,43 @@
+name: scp files
 on:
   push:
     branches:
       - master
-      
-      jobs:
-  Explore-GitHub-Actions:
+
+env:
+  TARGET_DIR: /home/github/test
+
+jobs:
+  build:
+    name: Build
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-      
-- name: ssh pipelines
-  uses: cross-the-world/ssh-pipeline@master
-  env:
-    WELCOME: "ssh pipeline"
-  with:
-    host: ${{ secrets.HOST }}
-    user: root
-    pass: ${{ secrets.PASSWORD }}
-    port: 22
-    connect_timeout: 30S
-    script: |
-      echo $WELCOME 
-      mkdir -p /home/github/test/test1 && 
-      mkdir -p /home/github/test/test2 &&
+      - name: checkout
+        uses: actions/checkout@v1
+
+      - name: ssh scp ssh pipelines
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        env:
+          WELCOME: "ssh scp ssh pipelines"
+          LASTSSH: "Doing something after copying"
+        with:
+          host: "45.130.15.51"
+          user: root
+          pass: "root"
+          port: "22"
+          connect_timeout: 10s
+          first_ssh: |-
+            rm -rf /home/github/test  
+            ls -la 
+            echo $WELCOME   
+            mkdir -p /home/github/test/test1 &&    
+            mkdir -p /home/github/test/test2 &&
+          scp: |-
+            './test/*' => /home/github/test/
+            ./test/test1* => $TARGET_DIR/test1/
+            ./test/test*.csv => "/home/github/test/test2/"
+          last_ssh: |-
+            echo $LASTSSH &&
+            (mkdir test1/test || true)
+            ls -la
