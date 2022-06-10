@@ -20,5 +20,5 @@ jobs:
             exit 1
           host: 45.130.15.51
           user: root
-          key: ${{ secrets.SSH_LEY}}
+          key: ${{ secrets.SSH_KEY}}
           args: "-tt -vvv"
