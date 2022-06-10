@@ -12,13 +12,13 @@ jobs:
     steps:
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
-   with:
-    host: 45.130.15.51
-    username: root
-    password: ${{ secrets.PASSWORD }}
-    port: 22
-    script: 
-            ls -a
-            echo "test"
-            exit whoami
+      with:
+        host: 45.130.15.51
+        username: root
+        password: ${{ secrets.PASSWORD }}
+        port: 22
+        script: 
+                ls -a
+                echo "test"
+                exit whoami
 
