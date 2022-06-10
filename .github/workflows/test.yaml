@@ -18,7 +18,5 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: 22
         script: 
-                ls -a
-                echo "test"
-                exit whoami
+               whoami
 
